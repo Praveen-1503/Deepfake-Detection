@@ -77,7 +77,7 @@ const App = () => {
   }, []);
 
 
-  // Create image preview and simulate analysis
+  // Create image preview and call API for analysis
   useEffect(() => {
     if (!image) {
       setPreview(null);
@@ -87,19 +87,46 @@ const App = () => {
     const objectUrl = URL.createObjectURL(image);
     setPreview(objectUrl);
     
-    // Simulate API call and analysis
+    // Call the backend API
     setIsLoading(true);
     setResult(null);
-    const timer = setTimeout(() => {
-        const detection = Math.random() > 0.5 ? 'Real' : 'Deepfake';
-        const confidence = (Math.random() * (99.9 - 95.5) + 95.5).toFixed(2);
-        setResult({ detection, confidence });
+    
+    const analyzeImage = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('file', image);
+        
+        const response = await fetch('http://127.0.0.1:5002/predict', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to analyze image');
+        }
+        
+        const data = await response.json();
+        setResult({
+          detection: data.detection,
+          confidence: data.confidence,
+          explanation: data.explanation
+        });
         setIsLoading(false);
-    }, 2000); // 2-second delay
+      } catch (error) {
+        console.error('Error analyzing image:', error);
+        setResult({
+          detection: 'Error',
+          confidence: 0,
+          explanation: 'Failed to analyze image. Please try again.'
+        });
+        setIsLoading(false);
+      }
+    };
+    
+    analyzeImage();
 
     // Cleanup
     return () => {
-        clearTimeout(timer);
         URL.revokeObjectURL(objectUrl);
     }
   }, [image]);
@@ -253,6 +280,12 @@ const App = () => {
                                                 </div>
                                             )}
                                             <p className="text-lg text-gray-300">Confidence: <span className="font-bold text-white">{result.confidence}%</span></p>
+                                            {result.explanation && (
+                                                <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                                                    <p className="text-sm text-gray-400 mb-1 font-semibold">AI Analysis:</p>
+                                                    <p className="text-base text-gray-200">{result.explanation}</p>
+                                                </div>
+                                            )}
                                             <motion.button 
                                                 onClick={resetUploader} 
                                                 whileHover={{ scale: 1.05 }}
