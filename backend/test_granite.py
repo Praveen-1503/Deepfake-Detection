@@ -7,7 +7,7 @@ url = "http://127.0.0.1:5002/predict"
 
 # ✅ Test multiple images
 test_images = [
-    "/Users/praveen1517/Documents/LiveInLab - III/RealReveal/backend/testing images/resized_fake/fake_1002.jpg",
+    "/Users/praveen1517/Documents/LiveInLab - III/RealReveal/backend/testing images/resized_fake/fake_1003.jpg",
     "/Users/praveen1517/Documents/LiveInLab - III/RealReveal/backend/testing images/resized_real/real_1002.jpg",
 ]
 
