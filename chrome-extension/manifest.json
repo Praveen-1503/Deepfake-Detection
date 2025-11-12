@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "description": "Right-click any image to detect deepfakes with AI",
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>"
